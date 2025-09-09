@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
@@ -7,18 +8,28 @@ const EmpEdit = () => {
     //const [empdata, empdatachange] = useState({});
 
     useEffect(() => {
-        fetch("http://localhost:3001/employee" + empid).then((res) => {
-            return res.json();
-        }).then((resp) => {
+    const fetchEmployee = async () => {
+        try {
+            const response = await fetch(`http://localhost:3001/employee/${empid}`);
+            if (!response.ok) {
+                throw new Error("Failed to fetch employee data");
+            }
+
+            const resp = await response.json();
+
             idchange(resp.id);
             namechange(resp.name);
             emailchange(resp.email);
             phonechange(resp.phone);
             activechange(resp.isactive);
-        }).catch((err) => {
-            console.log(err.message);
-        })
-    }, []);
+        } catch (err) {
+            console.error("Error:", err.message);
+        }
+    };
+
+    fetchEmployee();
+}, [empid]);
+
 
     const[id,idchange]=useState("");
     const[name,namechange]=useState("");
@@ -35,16 +46,25 @@ const EmpEdit = () => {
       const empdata={id,name,email,phone,active};
       
 
-      fetch("http://localhost:8000/employee/"+empid,{
-        method:"PUT",
-        headers:{"content-type":"application/json"},
-        body:JSON.stringify(empdata)
-      }).then((res)=>{
-        alert('Saved successfully.')
-        navigate('/');
-      }).catch((err)=>{
-        console.log(err.message)
-      })
+      const updateEmployee = async () => {
+    try {
+        const response = await fetch(`http://localhost:8000/employee/${empid}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(empdata),
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to update employee");
+        }
+
+        alert("Saved successfully.");
+        navigate("/");
+    } catch (err) {
+        console.error("Error:", err.message);
+    }
+};
+
 
     }
     return ( 

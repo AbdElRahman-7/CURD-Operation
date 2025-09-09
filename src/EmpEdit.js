@@ -7,18 +7,28 @@ const EmpEdit = () => {
     //const [empdata, empdatachange] = useState({});
 
     useEffect(() => {
-        fetch("http://localhost:3001/employee" + empid).then((res) => {
-            return res.json();
-        }).then((resp) => {
-            idchange(resp.id);
-            namechange(resp.name);
-            emailchange(resp.email);
-            phonechange(resp.phone);
-            activechange(resp.isactive);
-        }).catch((err) => {
-            console.log(err.message);
-        })
-    }, []);
+  const fetchEmployee = async () => {
+    try {
+      const response = await fetch(`http://localhost:3001/employee/${empid}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch employee data");
+      }
+
+      const resp = await response.json();
+
+      idchange(resp.id);
+      namechange(resp.name);
+      emailchange(resp.email);
+      phonechange(resp.phone);
+      activechange(resp.isactive);
+    } catch (err) {
+      console.error("Error:", err.message);
+    }
+  };
+
+  fetchEmployee();
+}, [empid]);
+
 
     const[id,idchange]=useState("");
     const[name,namechange]=useState("");
