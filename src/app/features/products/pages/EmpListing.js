@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -11,31 +12,46 @@ const EmpListing = () => {
     const LoadEdit = (id) => {
         navigate("/employee/edit/" + id);
     }
-    const Removefunction = (id) => {
-        if (window.confirm('Do you want to remove?')) {
-            fetch("http://localhost:3001/employee" + id, {
-                method: "DELETE"
-            }).then((res) => {
-                alert('Removed successfully.')
-                window.location.reload();
-            }).catch((err) => {
-                console.log(err.message)
-            })
+    const Removefunction = async (id) => {
+    if (window.confirm("Do you want to remove?")) {
+        try {
+            const response = await fetch(`http://localhost:3001/employee/${id}`, {
+                method: "DELETE",
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to remove employee");
+            }
+
+            alert("Removed successfully.");
+            window.location.reload();
+        } catch (err) {
+            console.error("Error:", err.message);
         }
     }
+};
 
 
 
 
-    useEffect(() => {
-        fetch("http://localhost:3001/employee").then((res) => {
-            return res.json();
-        }).then((resp) => {
-            empdatachange(resp);
-        }).catch((err) => {
-            console.log(err.message);
-        })
-    }, [])
+   useEffect(() => {
+    const fetchEmployees = async () => {
+        try {
+            const response = await fetch("http://localhost:3001/employee");
+            if (!response.ok) {
+                throw new Error("Failed to fetch employees");
+            }
+
+            const data = await response.json();
+            empdatachange(data);
+        } catch (err) {
+            console.error("Error:", err.message);
+        }
+    };
+
+    fetchEmployees();
+}, []);
+
     return (
         <div className="container">
             <div className="card">

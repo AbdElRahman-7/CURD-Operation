@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 /* eslint-disable no-unused-vars */
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -18,16 +19,25 @@ const EmpCreate = () => {
       e.preventDefault();
       const empdata={name,email,phone,active};
 
-      fetch("http://localhost:3001/employee",{
-        method:"POST",
-        headers:{"content-type":"application/json"},
-        body:JSON.stringify(empdata)
-      }).then((res)=>{
-        alert('Saved successfully.')
-        navigate('/');
-      }).catch((err)=>{
-        console.log(err.message)
-      })
+      const saveEmployee = async () => {
+    try {
+        const response = await fetch("http://localhost:3001/employee", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(empdata),
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to save employee");
+        }
+
+        alert("Saved successfully.");
+        navigate("/");
+    } catch (err) {
+        console.error("Error:", err.message);
+    }
+};
+
 
     }
 

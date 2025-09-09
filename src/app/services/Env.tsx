@@ -1,8 +1,5 @@
-
 const Env = () => {
-  return (
-    <div>Env</div>
-  )
-}
+  return <div>Env</div>;
+};
 
-export default Env
+export default Env;
